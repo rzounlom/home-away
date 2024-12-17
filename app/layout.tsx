@@ -2,6 +2,8 @@ import './globals.css';
 
 import { Inter } from 'next/font/google';
 import type { Metadata } from 'next';
+import Navbar from '@/components/navbar/Navbar';
+
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
@@ -17,6 +19,7 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={inter.className}>
+        <Navbar />
         <main className='container py-10'>{children}</main>
       </body>
     </html>
