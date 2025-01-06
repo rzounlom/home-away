@@ -1,5 +1,13 @@
 import './globals.css';
 
+import {
+  ClerkProvider,
+  SignInButton,
+  SignedIn,
+  SignedOut,
+  UserButton
+} from '@clerk/nextjs'
+
 import { Inter } from 'next/font/google';
 import type { Metadata } from 'next';
 import Navbar from '@/components/navbar/Navbar';
@@ -18,6 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <ClerkProvider>
     <html lang='en' suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>
@@ -26,5 +35,7 @@ export default function RootLayout({
         </Providers>
       </body>
     </html>
+    </ClerkProvider>
+
   );
 }
