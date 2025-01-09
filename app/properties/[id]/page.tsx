@@ -8,9 +8,18 @@ import PropertyDetails from "@/components/properties/PropertyDetails";
 import PropertyRating from "@/components/card/PropertyRating";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import ShareButton from "@/components/properties/ShareButton";
+import { Skeleton } from "@/components/ui/skeleton";
 import UserInfo from "@/components/properties/UserInfo";
+import dynamic from "next/dynamic";
 import { fetchPropertyDetails } from "@/utils/actions";
 import { redirect } from "next/navigation";
+const DynamicMap = dynamic(
+  () => import("@/components/properties/PropertyMap"),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-[400px] w-full" />,
+  }
+);
 
 async function PropertyDetailsPage({ params }: { params: { id: string } }) {
   const property = await fetchPropertyDetails(params.id);
@@ -43,6 +52,7 @@ async function PropertyDetailsPage({ params }: { params: { id: string } }) {
           <Separator className="mt-4" />
           <Description description={description} />
           <Amenities amenities={amenities} />
+          <DynamicMap countryCode={property.country} />;
         </div>
         <div className="lg:col-span-4 flex flex-col items-center">
           {/* calendar */}
