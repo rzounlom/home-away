@@ -1,6 +1,7 @@
 "use client";
 
 import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { LuPencilLine, LuTrash2 } from "react-icons/lu";
 
 import { Button } from "@/components/ui/button";
 import { ReloadIcon } from "@radix-ui/react-icons";
@@ -14,6 +15,8 @@ type SubmitButtonProps = {
   text?: string;
   size?: btnSize;
 };
+
+type actionType = "edit" | "delete";
 
 export function SubmitButton({
   className = "",
@@ -72,6 +75,33 @@ export const CardSubmitButton = ({ isFavorite }: { isFavorite: boolean }) => {
       ) : (
         <FaRegHeart />
       )}
+    </Button>
+  );
+};
+
+export const IconButton = ({ actionType }: { actionType: actionType }) => {
+  const { pending } = useFormStatus();
+
+  const renderIcon = () => {
+    switch (actionType) {
+      case "edit":
+        return <LuPencilLine />;
+      case "delete":
+        return <LuTrash2 />;
+      default:
+        const never: never = actionType;
+        throw new Error(`Invalid action type: ${never}`);
+    }
+  };
+
+  return (
+    <Button
+      type="submit"
+      size="icon"
+      variant="link"
+      className="p-2 cursor-pointer"
+    >
+      {pending ? <ReloadIcon className=" animate-spin" /> : renderIcon()}
     </Button>
   );
 };

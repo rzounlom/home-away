@@ -6,12 +6,16 @@ import FavoriteToggleButton from "@/components/card/FavoriteToggleButton";
 import ImageContainer from "@/components/properties/ImageContainer";
 import PropertyDetails from "@/components/properties/PropertyDetails";
 import PropertyRating from "@/components/card/PropertyRating";
+import PropertyReviews from "@/components/reviews/PropertyReviews";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import ShareButton from "@/components/properties/ShareButton";
 import { Skeleton } from "@/components/ui/skeleton";
+import SubmitReview from "@/components/reviews/SubmitReview";
 import UserInfo from "@/components/properties/UserInfo";
+import { auth } from "@clerk/nextjs/server";
 import dynamic from "next/dynamic";
 import { fetchPropertyDetails } from "@/utils/actions";
+import { findExistingReview } from "@/utils/actions";
 import { redirect } from "next/navigation";
 const DynamicMap = dynamic(
   () => import("@/components/properties/PropertyMap"),
@@ -27,6 +31,11 @@ async function PropertyDetailsPage({ params }: { params: { id: string } }) {
   const { baths, bedrooms, beds, guests, description, amenities } = property;
   const details = { baths, bedrooms, beds, guests };
   const { firstName, profileImage } = property.profile;
+
+  const { userId } = auth();
+  const isNotOwner = property.profile.clerkId !== userId;
+  const reviewDoesNotExist =
+    userId && isNotOwner && !(await findExistingReview(userId, property.id));
 
   // console.log(property);
   return (
@@ -52,13 +61,16 @@ async function PropertyDetailsPage({ params }: { params: { id: string } }) {
           <Separator className="mt-4" />
           <Description description={description} />
           <Amenities amenities={amenities} />
-          <DynamicMap countryCode={property.country} />;
+          <DynamicMap countryCode={property.country} />
         </div>
         <div className="lg:col-span-4 flex flex-col items-center">
           {/* calendar */}
           <BookingCalendar />
         </div>
       </section>
+      {/* after two column section */}
+      {reviewDoesNotExist && <SubmitReview propertyId={property.id} />}
+      <PropertyReviews propertyId={property.id} />
     </section>
   );
 }
