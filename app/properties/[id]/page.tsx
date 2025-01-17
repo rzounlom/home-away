@@ -1,5 +1,4 @@
 import Amenities from "@/components/properties/Amenities";
-import BookingCalendar from "@/components/properties/bookings/BookingCalendar";
 import BreadCrumbs from "@/components/properties/BreadCrumbs";
 import Description from "@/components/properties/Description";
 import FavoriteToggleButton from "@/components/card/FavoriteToggleButton";
@@ -25,6 +24,14 @@ const DynamicMap = dynamic(
   }
 );
 
+const DynamicBookingWrapper = dynamic(
+  () => import("@/components/booking/BookingWrapper"),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-[200px] w-full" />,
+  }
+);
+
 async function PropertyDetailsPage({ params }: { params: { id: string } }) {
   const property = await fetchPropertyDetails(params.id);
   if (!property) redirect("/");
@@ -37,7 +44,8 @@ async function PropertyDetailsPage({ params }: { params: { id: string } }) {
   const reviewDoesNotExist =
     userId && isNotOwner && !(await findExistingReview(userId, property.id));
 
-  // console.log(property);
+  console.log({ bookings: property.bookings });
+
   return (
     <section>
       <BreadCrumbs name={property.name} />
@@ -65,7 +73,11 @@ async function PropertyDetailsPage({ params }: { params: { id: string } }) {
         </div>
         <div className="lg:col-span-4 flex flex-col items-center">
           {/* calendar */}
-          <BookingCalendar />
+          <DynamicBookingWrapper
+            propertyId={property.id}
+            price={property.price}
+            bookings={property.bookings}
+          />
         </div>
       </section>
       {/* after two column section */}
