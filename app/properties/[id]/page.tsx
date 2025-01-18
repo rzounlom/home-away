@@ -44,8 +44,6 @@ async function PropertyDetailsPage({ params }: { params: { id: string } }) {
   const reviewDoesNotExist =
     userId && isNotOwner && !(await findExistingReview(userId, property.id));
 
-  console.log({ bookings: property.bookings });
-
   return (
     <section>
       <BreadCrumbs name={property.name} />
